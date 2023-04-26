@@ -7,7 +7,8 @@ from database.db_setup import engine, Users
 
 class User(Base):
     __tablename__ = 'Users'
-    id = Column(String, primary_key=True)
+    user_id = Column(String, primary_key=True)
+    email = Column(String)
     name = Column(String)
     login = Column(String)
     password = Column(String)

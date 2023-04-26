@@ -1,3 +1,4 @@
+import weakref
 from datetime import date
 from json import JSONEncoder
 
@@ -9,6 +10,7 @@ class AppJsonEncoder(JSONEncoder):
             if isinstance(obj, date):
                 return obj.isoformat()
             iterable = iter(obj)
+
         except TypeError:
             pass
         else:
