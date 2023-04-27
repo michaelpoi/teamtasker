@@ -1,8 +1,10 @@
 import {React, useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 //import {useHistory} from 'react-router-dom'
 
 
 export default function SignUp() {
+    const navigate = useNavigate()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [login, setLogin] = useState('')
@@ -24,6 +26,7 @@ export default function SignUp() {
         console.log(JSON.stringify(data))
         if (response.ok){
             console.log('Response worked')
+            navigate('/signin')
         }
         console.log('Form submitted:', { name, email, login, password });
       };

@@ -3,7 +3,7 @@ from flask_restx import Resource, Namespace
 from model.User import User
 from sqlalchemy import String
 from sqlalchemy.orm import sessionmaker
-from database.db_setup import engine, Users, sessionClass
+from database.db_setup import engine, Users, sessionClass, Projects, WorkFor
 
 UserAPI = Namespace('user', description='users management')
 
@@ -59,6 +59,17 @@ class SpecificUserOps(Resource):
             return jsonify(user)
         return jsonify("User was not found")
 
+@UserAPI.route('/<user_id>/projects')
+class GetProjects(Resource):
+    @UserAPI.doc(description = "Get users projects")
+    def get(self, user_id):
+        session = sessionClass()
+        res1 = session.query(WorkFor.c.role,Projects).join(WorkFor).filter(WorkFor.c.user_id == user_id)
+        keys = ["role","project_id", "name","desc", "start_date", "end_date"]
+        res2 = []
+        for item in res1:
+            res2.append(dict(zip(keys,item)))
+        return jsonify(res2)
 
 # @UserAPI.route('/<login>')
 # class Login(Resource):

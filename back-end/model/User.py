@@ -1,8 +1,10 @@
 import uuid
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column,String
-Base = declarative_base()
-from database.db_setup import engine, Users
+from sqlalchemy import Column, String
+from database.db_setup import engine, Users, WorkFor,Base
+
+
+
 
 
 class User(Base):
@@ -12,6 +14,7 @@ class User(Base):
     name = Column(String)
     login = Column(String)
     password = Column(String)
+
     def __init__(self, name, email, login, password):
         self.user_id = str(uuid.uuid4())
         self.name = str(name)
@@ -21,10 +24,10 @@ class User(Base):
 
     def addUser(self):
         conn = engine.connect()
-        statement = Users.insert().values(id = self.user_id,
-                                          name = self.name,
-                                          email = self.email,
-                                          login = self.login,
+        statement = Users.insert().values(id=self.user_id,
+                                          name=self.name,
+                                          email=self.email,
+                                          login=self.login,
                                           password=self.password)
         try:
             conn.execute(statement)
@@ -35,7 +38,3 @@ class User(Base):
             return False
         finally:
             conn.close()
-
-
-
-

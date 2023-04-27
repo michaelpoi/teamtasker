@@ -3,15 +3,23 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import SignUp from "./components/SignUp";
+import SignIn from "./components/SignIn";
 import './App.css';
+import UserProfile from "./components/UserProfile";
 
 function App() {
+  const [SignedID, setSignedID] = useState('')
+  const handleSignIn = (userID) =>{
+    setSignedID(userID)
+  }
   return (
       <BrowserRouter>
-      <NavBar></NavBar>
+      <NavBar SignedID={SignedID}></NavBar>
         <Routes>
           <Route path="/" Component={Home}></Route>
           <Route path="/signup" Component={SignUp}></Route>
+          <Route path="/signin" element={<SignIn setID = {handleSignIn}></SignIn>} ></Route>
+          <Route path='/profile' element={<UserProfile SignedID={SignedID}></UserProfile>}></Route>
         </Routes>
       </BrowserRouter>
 
