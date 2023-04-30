@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, ForeignKey, PrimaryKeyConstraint, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 engine = create_engine('sqlite:///database/teamtasker.db')
@@ -25,6 +25,8 @@ Tasks = Table('Tasks', meta,
               Column('name', String),
               Column('desc', String),
               Column('role', String),
+              Column('end_date', DateTime),
+              Column('is_done', Boolean),
               Column('project_id', ForeignKey('Projects.id')))
 meta.create_all(engine)
 sessionClass = sessionmaker(bind=engine)

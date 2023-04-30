@@ -31,8 +31,13 @@ export default function NavBar(props) {
      to={'/profile'}
      className='nav-link'
     >
-      Profile
+      DashBoard
     </Link>
+    <Link 
+     to={'/addproj'}
+     className='nav-link'>
+      Add Project
+     </Link>
 </ul>
   }
   return (

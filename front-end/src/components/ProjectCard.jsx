@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
 
 export default function ProjectCard(props) {
     const data = props.data
@@ -14,11 +16,11 @@ export default function ProjectCard(props) {
     <h3>{data.role}{crown}</h3>
   </div>
   <div class="card-body">
-    <h5 class="card-title" style={{fontSize:25}}>{data.name}</h5>
-    <p class="card-text" style={{fontSize:17}}>{data.desc}</p>
-    <a href="#" class="btn btn-primary">Go to Project</a>
+    <h5 className="card-title" style={{fontSize:25}}>{data.name}</h5>
+    <p className="card-text" style={{fontSize:17}}>{data.desc}</p>
+    <Link to={`/project/${data.project_id}`} className="btn btn-primary">{data.project_id}</Link>
   </div>
-  <div class="card-footer text-muted" style={{fontSize:20}}>
+  <div className="card-footer text-muted" style={{fontSize:20}}>
     Project period: from <b>{arr[0]}</b> to <b>{arr2[0]}</b>
   </div>
 </div>

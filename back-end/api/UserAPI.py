@@ -1,9 +1,9 @@
 from flask import jsonify, request
 from flask_restx import Resource, Namespace
 from model.User import User
-from sqlalchemy import String
+from sqlalchemy import String, and_, or_
 from sqlalchemy.orm import sessionmaker
-from database.db_setup import engine, Users, sessionClass, Projects, WorkFor
+from database.db_setup import engine, Users, sessionClass, Projects, WorkFor, Tasks
 
 UserAPI = Namespace('user', description='users management')
 
@@ -36,6 +36,7 @@ class GeneralUserOps(Resource):
     def get(self):
         session = sessionClass()
         res = session.query(Users).all()
+        session.close()
         return jsonify(res)
     # @UserAPI.doc(description="Get user by login")
     # def get(self, login):
@@ -51,25 +52,46 @@ class SpecificUserOps(Resource):
         session = sessionClass()
         res = session.query(Users).filter(Users.c.id == user_id)
         session.close()
-        c = list(res)[0]
-        if len(c) != 0:
-            user_id = c[0]
-            user = User(*c[1:])
-            user.user_id = user_id
-            return jsonify(user)
-        return jsonify("User was not found")
+        try:
+            c = list(res)[0]
+            if len(c) != 0:
+                user_id = c[0]
+                user = User(*c[1:])
+                user.user_id = user_id
+                return jsonify(user)
+        except:
+            return jsonify("User was not found")
 
 @UserAPI.route('/<user_id>/projects')
 class GetProjects(Resource):
     @UserAPI.doc(description = "Get users projects")
     def get(self, user_id):
         session = sessionClass()
-        res1 = session.query(WorkFor.c.role,Projects).join(WorkFor).filter(WorkFor.c.user_id == user_id)
+        res1 = session.query(WorkFor.c.role,Projects).join(WorkFor).\
+            filter(WorkFor.c.user_id == user_id)
+                        #or_(WorkFor.c.role == 'creator', WorkFor.c.role == Tasks.c.role)))
+        session.close()
         keys = ["role","project_id", "name","desc", "start_date", "end_date"]
         res2 = []
         for item in res1:
             res2.append(dict(zip(keys,item)))
         return jsonify(res2)
+
+@UserAPI.route('/<user_id>/tasks')
+class GetTasks(Resource):
+    @UserAPI.doc(description = "Get users tasks")
+    def get(self, user_id):
+        session = sessionClass()
+        res = session.query(Tasks.c.task_id,
+                            Tasks.c.name,
+                            Tasks.c.desc,
+                            Tasks.c.role).join(Projects).join(WorkFor).filter(WorkFor.c.user_id == user_id)
+        session.close()
+        keys = ["task_id", "name", "desc", "role"]
+        d = []
+        for item in res:
+            d.append(dict(zip(keys, item)))
+        return jsonify(d)
 
 # @UserAPI.route('/<login>')
 # class Login(Resource):
@@ -98,6 +120,7 @@ class SignIn(Resource):
             password_input = request.args['password']
         session = sessionClass()
         res = session.query(Users).filter(Users.c.login == login_input)[0]
+        session.close()
         password = res[4]
         #return password
         if password == password_input:
